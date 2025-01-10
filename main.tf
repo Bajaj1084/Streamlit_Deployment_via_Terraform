@@ -15,8 +15,7 @@ terraform {
   }
 }
 
-provider "snowflake" {
-}
+provider "snowflake" {}
 
 resource "snowflake_role" "app_role" {
   name = "STREAMLIT_APP_ROLE"
