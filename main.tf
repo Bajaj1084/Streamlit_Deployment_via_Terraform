@@ -8,14 +8,17 @@ terraform {
 
   backend "remote" {
     organization = "my-organization-name"
-    role = "ACCOUNTADMIN"
-    account ="axivxno-bwb79529"
-    username = "sftraining"
 
     workspaces {
       name = "gh-actions-demo"
     }
   }
+}
+
+provider "snowflake" {
+role = "ACCOUNTADMIN"
+account ="axivxno-bwb79529"
+username = "sftraining"
 }
 
 
