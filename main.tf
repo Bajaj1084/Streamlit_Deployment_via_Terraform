@@ -59,7 +59,7 @@ resource "snowflake_grant_privileges_to_account_role" "warehouse_grant" {
 }
 
 output "warehouse_name" {
-  value = snowflake_warehouse.wh.name
+  value = snowflake_warehouse.warehouse.name
 }
 
 output "database_name" {
