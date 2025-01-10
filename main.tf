@@ -29,3 +29,10 @@ resource "snowflake_schema" "demo_schema" {
   name     = "DEMO_SCHEMA_V3"
   comment  = "Schema for Snowflake Terraform demo"
 }
+
+resource "snowflake_streamlit" "streamlit" {
+  database  = "DEMO_DB_V3"
+  schema    = "DEMO_SCHEMA_V3"
+  name      = "Demo_streamlit"
+  main_file = "/app.py"
+}
