@@ -33,7 +33,7 @@ jobs:
           SNOWFLAKE_PASSWORD: ${{ secrets.SNOWCLI_PW }}
       run: |
         mkdir -p ~/.snowflake
-        cp ./prod/config.toml ~/.snowflake/config.toml
+        cp ./config.toml ~/.snowflake/config.toml
         echo "password = \"$SNOWFLAKE_PASSWORD\"" >> ~/.snowflake/config.toml
         chmod 0600 ~/.snowflake/config.toml
 
