@@ -43,6 +43,13 @@ jobs:
         echo "password = \"$SNOWFLAKE_PASSWORD\"" >> ~/.snowflake/config.toml
         chmod 0600 ~/.snowflake/config.toml
 
+    - name: Test Snowflake Connection
+      shell: bash
+      run: |
+        snowflake-cli "SELECT CURRENT_USER();"
+      continue-on-error: false
+      
+
     - name: 'Deploy the Streamlit app'
       shell: bash
       run: |
