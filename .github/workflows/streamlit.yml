@@ -28,20 +28,20 @@ jobs:
         python -m pip install --upgrade pip
         pip install snowflake-cli-labs
 
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
-      with:
-          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+    # - name: Setup Terraform
+    #   uses: hashicorp/setup-terraform@v1
+    #   with:
+    #       cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
-    # - name: 'Create config'
-    #   shell: bash
-    #   env:
-    #       SNOWFLAKE_PASSWORD: ${{ secrets.SNOWCLI_PW }}
-    #   run: |
-    #     mkdir -p ~/.snowflake
-    #     cp config.toml ~/.snowflake/config.toml
-    #     echo "password = \"$SNOWFLAKE_PASSWORD\"" >> ~/.snowflake/config.toml
-    #     chmod 0600 ~/.snowflake/config.toml
+    - name: 'Create config'
+      shell: bash
+      env:
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWCLI_PW }}
+      run: |
+        mkdir -p ~/.snowflake
+        cp config.toml ~/.snowflake/config.toml
+        echo "password = \"$SNOWFLAKE_PASSWORD\"" >> ~/.snowflake/config.toml
+        chmod 0600 ~/.snowflake/config.toml
 
     - name: 'Deploy the Streamlit app'
       shell: bash
