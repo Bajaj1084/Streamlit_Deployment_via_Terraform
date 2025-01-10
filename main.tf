@@ -30,3 +30,12 @@ resource "snowflake_schema" "demo_schema" {
   comment  = "Schema for Snowflake Terraform demo"
 }
 
+resource "snowflake_warehouse" "app_wh" {
+  name                 = "AF_TEST"
+  warehouse_size       = "XSMALL"
+  auto_suspend         = 300
+  auto_resume          = true
+  initially_suspended  = false
+}
+
+
