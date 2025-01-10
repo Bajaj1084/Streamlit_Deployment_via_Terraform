@@ -1,6 +1,7 @@
 [connections.default]
 account = "axivxno-bwb79529"
+region = "us-west-2"
 user = "sftraining"
 role = "SYSADMIN"
-database = "GIT"
+database = "git"
 schema = "PUBLIC"
