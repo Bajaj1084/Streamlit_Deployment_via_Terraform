@@ -3,6 +3,6 @@ account = "axivxno-bwb79529"
 region = "us-west-2"
 user = "sftraining"
 role = "SYSADMIN"
-schema="DEMO_SCHEMA_v2"
-database="DEMO_DB_v2"
+schema="DEMO_SCHEMA_V3"
+database="DEMO_DB_V3"
 
