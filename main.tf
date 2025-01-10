@@ -16,10 +16,8 @@ terraform {
 }
 
 provider "snowflake" {
-  role = "ACCOUNTADMIN"
 }
 resource "snowflake_role" "role" {
-  provider = snowflake.security_admin
   name     = "TF_DEMO_SVC_ROLE"
 }
 
@@ -40,7 +38,6 @@ resource "snowflake_warehouse" "warehouse" {
 
 
 resource "snowflake_grant_privileges_to_account_role" "database_grant" {
-  provider          = snowflake.security_admin
   privileges        = ["USAGE"]
   account_role_name = snowflake_role.role.name
   on_account_object {
@@ -50,7 +47,6 @@ resource "snowflake_grant_privileges_to_account_role" "database_grant" {
 }
 
 resource "snowflake_grant_privileges_to_account_role" "warehouse_grant" {
-  provider          = snowflake.security_admin
   privileges        = ["USAGE"]
   account_role_name = snowflake_role.role.name
   on_account_object {
