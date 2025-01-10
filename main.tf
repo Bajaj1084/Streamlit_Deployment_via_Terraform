@@ -5,65 +5,121 @@ terraform {
       version = "0.25.17"
     }
   }
+}
 
-  backend "remote" {
-    organization = "my-organization-name"
+provider "snowflake" {}
 
-    workspaces {
-      name = "gh-actions-demo"
-    }
+# Create Snowflake role
+resource "snowflake_role" "app_role" {
+  name = "STREAMLIT_APP_ROLE"
+}
+
+# Create Snowflake database
+resource "snowflake_database" "app_db" {
+  name = "STREAMLIT_APP_DB"
+}
+
+# Create Snowflake schema
+resource "snowflake_schema" "app_schema" {
+  name     = "APP_SCHEMA"
+  database = snowflake_database.app_db.name
+}
+
+# Create Snowflake warehouse
+resource "snowflake_warehouse" "app_wh" {
+  name                 = "STREAMLIT_APP_WH"
+  warehouse_size       = "XSMALL"
+  auto_suspend         = 300
+  auto_resume          = true
+  initially_suspended  = false
+}
+
+# Grant usage and privileges on account level
+resource "snowflake_grant" "account_grants" {
+  for_each = toset(["USAGE"])
+  
+  grants_on {
+    account = true
   }
+
+  privileges = [each.value]
+  roles      = [snowflake_role.app_role.name]
 }
 
-provider "snowflake" {
-role = "ACCOUNTADMIN"
-account ="axivxno-bwb79529"
-username = "sftraining"
-}
+# Grant usage on the database
+resource "snowflake_grant" "database_grants" {
+  for_each = toset(["USAGE", "CREATE SCHEMA", "CREATE TABLE", "SELECT", "INSERT"])
 
-
-resource "snowflake_role" "role" {
-  name     = "TF_DEMO_SVC_ROLE"
-}
-
-resource "snowflake_database" "db" {
-  name = "TF_DEMO"
-}
-
-resource "snowflake_schema" "schema" {
-  database   = snowflake_database.db.name
-  name       = "TF_DEMO_SCHEMA"
-}
-
-resource "snowflake_warehouse" "warehouse" {
-  name           = "TF_DEMO"
-  warehouse_size = "small"
-  auto_suspend   = 60
-}
-
-
-resource "snowflake_grant_privileges_to_account_role" "database_grant" {
-  privileges        = ["USAGE"]
-  account_role_name = snowflake_role.role.name
-  on_account_object {
+  grants_on {
+    object_name = snowflake_database.app_db.name
     object_type = "DATABASE"
-    object_name = snowflake_database.db.name
   }
+
+  privileges = [each.value]
+  roles      = [snowflake_role.app_role.name]
 }
 
-resource "snowflake_grant_privileges_to_account_role" "warehouse_grant" {
-  privileges        = ["USAGE"]
-  account_role_name = snowflake_role.role.name
-  on_account_object {
+# Grant usage on the schema
+resource "snowflake_grant" "schema_grants" {
+  for_each = toset(["USAGE", "SELECT"])
+
+  grants_on {
+    object_name = "\"${snowflake_database.app_db.name}\".\"${snowflake_schema.app_schema.name}\""
+    object_type = "SCHEMA"
+  }
+
+  privileges = [each.value]
+  roles      = [snowflake_role.app_role.name]
+}
+
+# Grant usage on the warehouse
+resource "snowflake_grant" "warehouse_grants" {
+  for_each = toset(["USAGE", "OPERATE", "MONITOR"])
+
+  grants_on {
+    object_name = snowflake_warehouse.app_wh.name
     object_type = "WAREHOUSE"
-    object_name = snowflake_warehouse.warehouse.name
   }
+
+  privileges = [each.value]
+  roles      = [snowflake_role.app_role.name]
 }
 
+# Future grants for tables in the database
+resource "snowflake_grant" "future_table_grants_in_database" {
+  grants_on {
+    future_grants_in {
+      database = snowflake_database.app_db.name
+    }
+    object_type = "TABLE"
+  }
+
+  privileges = ["SELECT", "INSERT"]
+  roles      = [snowflake_role.app_role.name]
+}
+
+# Future grants for tables in the schema
+resource "snowflake_grant" "future_table_grants_in_schema" {
+  grants_on {
+    future_grants_in {
+      schema = "\"${snowflake_database.app_db.name}\".\"${snowflake_schema.app_schema.name}\""
+    }
+    object_type = "TABLE"
+  }
+
+  privileges = ["SELECT", "INSERT"]
+  roles      = [snowflake_role.app_role.name]
+}
+
+# Outputs for confirmation
 output "warehouse_name" {
-  value = snowflake_warehouse.warehouse.name
+  value = snowflake_warehouse.app_wh.name
 }
 
 output "database_name" {
-  value = snowflake_database.db.name
+  value = snowflake_database.app_db.name
+}
+
+output "schema_name" {
+  value = snowflake_schema.app_schema.name
 }
