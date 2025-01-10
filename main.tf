@@ -18,45 +18,51 @@ terraform {
 provider "snowflake" {
 }
 
-resource "snowflake_role" "app_role" {
-  name = "STREAMLIT_APP_ROLE"
+resource "snowflake_role" "role" {
+  provider = snowflake.security_admin
+  name     = "TF_DEMO_SVC_ROLE"
 }
 
-resource "snowflake_database" "app_db" {
-  name = "STREAMLIT_APP_DB"
+resource "snowflake_database" "db" {
+  name = "TF_DEMO"
 }
 
-resource "snowflake_schema" "app_schema" {
-  name     = "APP_SCHEMA"
-  database = snowflake_database.app_db.name
+resource "snowflake_schema" "schema" {
+  database   = snowflake_database.db.name
+  name       = "TF_DEMO_SCHEMA"
 }
 
-resource "snowflake_warehouse" "app_wh" {
-  name                 = "STREAMLIT_APP_WH"
-  warehouse_size       = "XSMALL"
-  auto_suspend         = 300
-  auto_resume          = true
-  initially_suspended  = false
+resource "snowflake_warehouse" "warehouse" {
+  name           = "TF_DEMO"
+  warehouse_size = "small"
+  auto_suspend   = 60
 }
 
-resource "snowflake_role_grants" "app_role_grants" {
-  role_name = snowflake_role.app_role.name
 
-  database_privileges {
-    database_name = snowflake_database.app_db.name
-    privileges    = ["USAGE", "CREATE SCHEMA"]
+resource "snowflake_grant_privileges_to_account_role" "database_grant" {
+  provider          = snowflake.security_admin
+  privileges        = ["USAGE"]
+  account_role_name = snowflake_role.role.name
+  on_account_object {
+    object_type = "DATABASE"
+    object_name = snowflake_database.db.name
   }
+}
 
-  warehouse_privileges {
-    warehouse_name = snowflake_warehouse.app_wh.name
-    privileges     = ["USAGE"]
+resource "snowflake_grant_privileges_to_account_role" "warehouse_grant" {
+  provider          = snowflake.security_admin
+  privileges        = ["USAGE"]
+  account_role_name = snowflake_role.role.name
+  on_account_object {
+    object_type = "WAREHOUSE"
+    object_name = snowflake_warehouse.warehouse.name
   }
 }
 
 output "warehouse_name" {
-  value = snowflake_warehouse.app_wh.name
+  value = snowflake_warehouse.wh.name
 }
 
 output "database_name" {
-  value = snowflake_database.app_db.name
+  value = snowflake_database.db.name
 }
