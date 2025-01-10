@@ -37,12 +37,13 @@ jobs:
       shell: bash
       env:
           SNOWFLAKE_PASSWORD: ${{ secrets.SNOWCLI_PW }}
-          SNOWFLAKE_DATABASE: ${{ secrets.SNOW_DB }}
+          
+      
       run: |
         mkdir -p ~/.snowflake
         cp config.toml ~/.snowflake/config.toml
         echo "password = \"$SNOWFLAKE_PASSWORD\"" >> ~/.snowflake/config.toml
-        echo "database = \"$SNOWFLAKE_DATABASE\"" >> ~/.snowflake/config.toml
+        
         chmod 0600 ~/.snowflake/config.toml
 
     # - name: Test Snowflake Connection
