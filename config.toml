@@ -2,5 +2,5 @@
 account = "axivxno-bwb79529"
 user = "sftraining"
 role = "SYSADMIN"
-database = "GIT_INT"
+database = "git_int"
 schema = "PUBLIC"
