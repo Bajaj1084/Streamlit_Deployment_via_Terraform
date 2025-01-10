@@ -33,15 +33,15 @@ jobs:
       with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
-    - name: 'Create config'
-      shell: bash
-      env:
-          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWCLI_PW }}
-      run: |
-        mkdir -p ~/.snowflake
-        cp config.toml ~/.snowflake/config.toml
-        echo "password = \"$SNOWFLAKE_PASSWORD\"" >> ~/.snowflake/config.toml
-        chmod 0600 ~/.snowflake/config.toml
+    # - name: 'Create config'
+    #   shell: bash
+    #   env:
+    #       SNOWFLAKE_PASSWORD: ${{ secrets.SNOWCLI_PW }}
+    #   run: |
+    #     mkdir -p ~/.snowflake
+    #     cp config.toml ~/.snowflake/config.toml
+    #     echo "password = \"$SNOWFLAKE_PASSWORD\"" >> ~/.snowflake/config.toml
+    #     chmod 0600 ~/.snowflake/config.toml
 
     # - name: Test Snowflake Connection
     #   shell: bash
@@ -53,20 +53,20 @@ jobs:
     #   id: fmt
     #   run: terraform fmt -check
 
-    # - name: Terraform Init
-    #   id: init
-    #   run: terraform init
+    - name: Terraform Init
+      id: init
+      run: terraform init
 
-    # - name: Terraform Validate
-    #   id: validate
-    #   run: terraform validate -no-color
+    - name: Terraform Validate
+      id: validate
+      run: terraform validate -no-color
 
-    # - name: Terraform Apply
-    #   id: apply
-    #   run: terraform apply -auto-approve
+    - name: Terraform Apply
+      id: apply
+      run: terraform apply -auto-approve
       
 
-    - name: 'Deploy the Streamlit app'
-      shell: bash
-      run: |
-        snow streamlit deploy --replace
+    # - name: 'Deploy the Streamlit app'
+    #   shell: bash
+    #   run: |
+    #     snow streamlit deploy --replace
