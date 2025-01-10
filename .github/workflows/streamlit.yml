@@ -21,22 +21,19 @@ jobs:
       with:
         python-version: ${{ env.PYTHON_VERSION }}
 
-
     - name: 'Install snowcli and pytest environment'
       shell: bash
       run: |
         python -m pip install --upgrade pip
         pip install snowflake-cli-labs
-
-    # - name: Setup Terraform
-    #   uses: hashicorp/setup-terraform@v1
-    #   with:
-    #       cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+        # Check if snowflake-cli was installed successfully and it's available
+        which snowflake-cli
+        snowflake-cli --version
 
     - name: 'Create config'
       shell: bash
       env:
-          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWCLI_PW }}
+        SNOWFLAKE_PASSWORD: ${{ secrets.SNOWCLI_PW }}
       run: |
         mkdir -p ~/.snowflake
         cp config.toml ~/.snowflake/config.toml
@@ -48,9 +45,6 @@ jobs:
       run: |
         snowflake-cli "SELECT CURRENT_USER();"
       continue-on-error: false
-
-      
-      
 
     - name: 'Deploy the Streamlit app'
       shell: bash
