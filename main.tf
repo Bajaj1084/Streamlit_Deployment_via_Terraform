@@ -8,6 +8,9 @@ terraform {
 
   backend "remote" {
     organization = "my-organization-name"
+    role = "ACCOUNTADMIN"
+    account ="axivxno-bwb79529"
+    username = "sftraining"
 
     workspaces {
       name = "gh-actions-demo"
@@ -15,11 +18,7 @@ terraform {
   }
 }
 
-provider "snowflake" {
-role = "ACCOUNTADMIN"
-account ="axivxno-bwb79529"
-username = "sftraining"
-}
+
 resource "snowflake_role" "role" {
   name     = "TF_DEMO_SVC_ROLE"
 }
