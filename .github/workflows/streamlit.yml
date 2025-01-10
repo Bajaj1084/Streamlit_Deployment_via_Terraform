@@ -75,5 +75,4 @@ jobs:
     - name: 'Deploy the Streamlit app'
       shell: bash
       run: |
-        snow sql --query "USE DATABASE DEMO_DB_V3; USE SCHEMA TF_DEMO_SCHEMA_V3;"
         snow streamlit deploy --replace
