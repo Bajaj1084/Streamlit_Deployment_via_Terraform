@@ -17,8 +17,8 @@ terraform {
 
 provider "snowflake" {
 role = "ACCOUNTADMIN"
-account_name ="axivxno-bwb79529"
-user= "sftraining"
+account ="axivxno-bwb79529"
+username = "sftraining"
 }
 resource "snowflake_role" "role" {
   name     = "TF_DEMO_SVC_ROLE"
