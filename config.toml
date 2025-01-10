@@ -5,4 +5,5 @@ user = "sftraining"
 role = "ACCOUNTADMIN"
 schema="DEMO_SCHEMA_V3"
 database="DEMO_DB_V3"
+warehouse="COMPUTE_WH"
 
