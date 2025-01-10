@@ -4,4 +4,5 @@ region = "us-west-2"
 user = "sftraining"
 role = "SYSADMIN"
 schema="DEMO_SCHEMA_V3"
+database="DEMO_DB_V3"
 
