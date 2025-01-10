@@ -26,11 +26,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           
-
       # Step 4: Run Streamlit tests
       - name: Run Streamlit tests
         run: |
-          streamlit run test_app.py --headless
+          streamlit run test_app.py --server.headless true
 
       # Step 5: Setup Terraform
       - name: Setup Terraform
