@@ -48,6 +48,8 @@ jobs:
       run: |
         snowflake-cli "SELECT CURRENT_USER();"
       continue-on-error: false
+
+      
       
 
     - name: 'Deploy the Streamlit app'
