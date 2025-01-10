@@ -42,7 +42,7 @@ jobs:
         mkdir -p ~/.snowflake
         cp config.toml ~/.snowflake/config.toml
         echo "password = \"$SNOWFLAKE_PASSWORD\"" >> ~/.snowflake/config.toml
-        echo "password = \"$SNOWFLAKE_DATABASE\"" >> ~/.snowflake/config.toml
+        echo "database = \"$SNOWFLAKE_DATABASE\"" >> ~/.snowflake/config.toml
         chmod 0600 ~/.snowflake/config.toml
 
     # - name: Test Snowflake Connection
