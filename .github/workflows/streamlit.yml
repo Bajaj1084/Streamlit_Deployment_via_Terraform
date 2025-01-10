@@ -70,7 +70,7 @@ jobs:
       run: terraform apply -auto-approve
       
 
-    # - name: 'Deploy the Streamlit app'
-    #   shell: bash
-    #   run: |
-    #     snow streamlit deploy --replace
+    - name: 'Deploy the Streamlit app'
+      shell: bash
+      run: |
+        snow streamlit deploy --replace
