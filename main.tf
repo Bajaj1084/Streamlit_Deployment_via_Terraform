@@ -87,19 +87,23 @@ resource "snowflake_file_format" "csv_ff" {
   database                     = "DEMO_DB_V3"
   schema                       = "DEMO_SCHEMA_V3"
   format_type                  = "CSV"
-  compression                  = "AUTO"
-  field_delimiter              = ","  # Field delimiter set to semicolon
-  record_delimiter             = "\n"  # Record delimiter set to newline
-  skip_header                  = 1  # Skips the header row (optional)
-  trim_space                   = false  # No trimming of space
+  binary_format                = "UTF-8"  # Binary format UTF-8
+  compression                  = "AUTO"  # Automatic compression
+  date_format                  = "AUTO"  # Auto date format
+  encoding                     = "UTF8"  # Encoding set to UTF-8
+  escape                       = "NONE"  # No escape character
+  escape_unenclosed_field      = "NONE"  # No escape for unenclosed fields
+  field_delimiter              = ";"  # Field delimiter set to semicolon
   field_optionally_enclosed_by = "\""  # Fields enclosed in double quotes
-  error_on_column_count_mismatch = true  # Ensures no column mismatch
-  escape                       = "\\"  # Escape character (backslash)
-  null_if                      = ["\N", "NULL", "NUL", ""]  # Null values to handle
-  escape_unenclosed_field     = "\\"  # Escape unenclosed fields
-  date_format                  = "YYYYMMDD"  # Date format
-  timestamp_format             = "YYYYMMDDhh24miss"  # Timestamp format
+  record_delimiter             = "\r\n"  # Record delimiter set to carriage return + newline
+  time_format                  = "AUTO"  # Auto time format
+  timestamp_format             = "AUTO"  # Auto timestamp format
+  empty_field_as_null          = true  # Empty fields treated as null
+  null_if                      = ["", "NA", "NULL"]  # Null values to handle
+  provider                     = "snowflake.db_write"  # Specify Snowflake write provider
+  skip_header                  = 1  # Skip the header row (optional)
 }
+
 
 
 
