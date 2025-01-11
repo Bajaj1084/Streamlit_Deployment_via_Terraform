@@ -98,9 +98,10 @@ resource "snowflake_stage" "s3_stage" {
   database    = "DEMO_DB_V3"
   schema      = "DEMO_SCHEMA_V3"
   url         = "s3://sfquickstarts/tastybytes-cx/app/"
-  file_format = snowflake_file_format.csv_ff.fully_qualified_name
+  file_format = "${snowflake_file_format.csv_ff.database}.${snowflake_file_format.csv_ff.schema}.${snowflake_file_format.csv_ff.name}"
   comment     = "Quickstarts S3 Stage Connection"
 }
+
 
 # Create Documents Table
 resource "snowflake_table" "documents" {
