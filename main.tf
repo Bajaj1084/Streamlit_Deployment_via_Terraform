@@ -87,7 +87,7 @@ resource "snowflake_file_format" "csv_ff" {
   database                     = "DEMO_DB_V3"
   schema                       = "DEMO_SCHEMA_V3"
   format_type                  = "CSV"
-  binary_format                = "UTF-8"  # Binary format UTF-8
+  binary_format                = "UTF8"  # Binary format UTF-8
   compression                  = "AUTO"  # Automatic compression
   date_format                  = "AUTO"  # Auto date format
   encoding                     = "UTF8"  # Encoding set to UTF-8
