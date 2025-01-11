@@ -90,12 +90,10 @@ resource "snowflake_file_format" "csv_ff" {
   database    = "DEMO_DB_V3"
   schema      = "DEMO_SCHEMA_V3"
   format_type = "CSV"
-
-  options = {
-    skip_header = 1       # Skips the header row (optional, configure as per your needs)
-    field_optionally_enclosed_by = "\""  # Handles fields enclosed in double quotes
-    validate_utf8 = true   # Explicitly enable UTF-8 validation
-  }
+  skip_header = 1       # Skips the header row (optional, configure as per your needs)
+  field_optionally_enclosed_by = "\""  # Handles fields enclosed in double quotes
+  validate_utf8 = true   # Explicitly enable UTF-8 validation
+  
 }
 
 
