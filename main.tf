@@ -97,6 +97,7 @@ resource "snowflake_file_format" "csv_ff" {
 
 
 
+
 # Create Stage
 resource "snowflake_stage" "s3_stage" {
   name        = "S3LOAD"
