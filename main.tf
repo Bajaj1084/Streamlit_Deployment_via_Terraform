@@ -81,9 +81,6 @@ resource "snowflake_table" "docs_chunks_table" {
 }
 
 
-
-
-
 # Create File Format
 resource "snowflake_file_format" "csv_ff" {
   name        = "APP_CSV_FF"
@@ -93,9 +90,7 @@ resource "snowflake_file_format" "csv_ff" {
   skip_header = 1       # Skips the header row (optional, configure as per your needs)
   field_optionally_enclosed_by = "\""  # Handles fields enclosed in double quotes
   validate_utf8 = true   # Explicitly enable UTF-8 validation
-  
 }
-
 
 # Create Stage
 resource "snowflake_stage" "s3_stage" {
@@ -103,7 +98,7 @@ resource "snowflake_stage" "s3_stage" {
   database    = "DEMO_DB_V3"
   schema      = "DEMO_SCHEMA_V3"
   url         = "s3://sfquickstarts/tastybytes-cx/app/"
-  file_format = "${snowflake_file_format.csv_ff.database}.${snowflake_file_format.csv_ff.schema}.${snowflake_file_format.csv_ff.name}"
+  file_format = snowflake_file_format.csv_ff.name  # Referencing the file format name correctly
   comment     = "Quickstarts S3 Stage Connection"
 }
 
