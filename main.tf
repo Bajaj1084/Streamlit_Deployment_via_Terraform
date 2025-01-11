@@ -92,7 +92,9 @@ resource "snowflake_file_format" "csv_ff" {
   validate_utf8 = true   # Explicitly enable UTF-8 validation
   compression = "NONE"   # Set compression to NONE (or use another valid compression type)
   record_delimiter = "\n" # Set record delimiter to newline
+  field_delimiter = ","  # Set field delimiter to comma
 }
+
 
 
 # Create Stage
