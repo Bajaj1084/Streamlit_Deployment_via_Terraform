@@ -101,6 +101,7 @@ resource "snowflake_file_format" "csv_ff" {
   empty_field_as_null          = true  # Empty fields treated as null
   null_if                      = ["", "NA", "NULL"]  # Null values to handle
   skip_header                  = 1  # Skip the header row (optional)
+  validate_utf8                = true
 }
 
 
