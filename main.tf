@@ -83,17 +83,24 @@ resource "snowflake_table" "docs_chunks_table" {
 
 # Create File Format
 resource "snowflake_file_format" "csv_ff" {
-  name        = "APP_CSV_FF"
-  database    = "DEMO_DB_V3"
-  schema      = "DEMO_SCHEMA_V3"
-  format_type = "CSV"
-  skip_header = 1       # Skips the header row (optional, configure as per your needs)
-  field_optionally_enclosed_by = "\""  # Handles fields enclosed in double quotes
-  validate_utf8 = true   # Explicitly enable UTF-8 validation
-  compression = "NONE"   # Set compression to NONE (or use another valid compression type)
-  record_delimiter = "\n" # Set record delimiter to newline
-  field_delimiter = ","  # Set field delimiter to comma
+  name                         = "APP_CSV_FF"
+  database                     = "DEMO_DB_V3"
+  schema                       = "DEMO_SCHEMA_V3"
+  format_type                  = "CSV"
+  compression                  = "AUTO"
+  field_delimiter              = ","  # Field delimiter set to semicolon
+  record_delimiter             = "\n"  # Record delimiter set to newline
+  skip_header                  = 1  # Skips the header row (optional)
+  trim_space                   = false  # No trimming of space
+  field_optionally_enclosed_by = "\""  # Fields enclosed in double quotes
+  error_on_column_count_mismatch = true  # Ensures no column mismatch
+  escape                       = "\\"  # Escape character (backslash)
+  null_if                      = ["\N", "NULL", "NUL", ""]  # Null values to handle
+  escape_unenclosed_field     = "\\"  # Escape unenclosed fields
+  date_format                  = "YYYYMMDD"  # Date format
+  timestamp_format             = "YYYYMMDDhh24miss"  # Timestamp format
 }
+
 
 
 
