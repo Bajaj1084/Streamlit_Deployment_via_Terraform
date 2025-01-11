@@ -100,7 +100,6 @@ resource "snowflake_file_format" "csv_ff" {
   timestamp_format             = "AUTO"  # Auto timestamp format
   empty_field_as_null          = true  # Empty fields treated as null
   null_if                      = ["", "NA", "NULL"]  # Null values to handle
-  provider                     = "snowflake.db_write"  # Specify Snowflake write provider
   skip_header                  = 1  # Skip the header row (optional)
 }
 
