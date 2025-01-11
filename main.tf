@@ -204,16 +204,6 @@ resource "snowflake_table" "vector_store" {
 }
 
 
-# Run COPY INTO to load data from S3 into the table
-resource "snowflake_query" "copy_into_documents" {
-  name     = "COPY_INTO_DOCUMENTS"
-  database = "DEMO_DB_V3"
-  schema   = "DEMO_SCHEMA_V3"
-  sql      = <<SQL
-    COPY INTO DEMO_DB_V3.DEMO_SCHEMA_V3.documents 
-    FROM @DEMO_DB_V3.DEMO_SCHEMA_V3.s3load/documents/;
-  SQL
-}
 
 # Data Copy Commands (Run these manually or via an external process as Terraform does not handle data loading directly)
 # COPY INTO TASTY_BYTES_CHATBOT.APP.DOCUMENTS FROM @TASTY_BYTES_CHATBOT.APP.S3LOAD/DOCUMENTS/
