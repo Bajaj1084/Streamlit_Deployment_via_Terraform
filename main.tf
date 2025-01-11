@@ -107,14 +107,14 @@ resource "snowflake_file_format" "csv_ff" {
 
 
 # Create Stage
-resource "snowflake_stage" "s3_stage" {
-  name        = "S3LOAD"
-  database    = "DEMO_DB_V3"
-  schema      = "DEMO_SCHEMA_V3"
-  url         = "s3://sfquickstarts/tastybytes-cx/app/"
-  file_format = "DEMO_DB_V3.DEMO_SCHEMA_V3.APP_CSV_FF"  # Fully qualified name
-  comment     = "Quickstarts S3 Stage Connection"
-}
+#resource "snowflake_stage" "s3_stage" {
+ # name        = "S3LOAD"
+  #database    = "DEMO_DB_V3"
+  #schema      = "DEMO_SCHEMA_V3"
+  #url         = "s3://sfquickstarts/tastybytes-cx/app/"
+  #file_format = "DEMO_DB_V3.DEMO_SCHEMA_V3.APP_CSV_FF"  # Fully qualified name
+  #comment     = "Quickstarts S3 Stage Connection"
+#}
 
 
 # Create Documents Table
