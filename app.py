@@ -1,150 +1,132 @@
-import streamlit as st # Import python packages
-from snowflake.snowpark.context import get_active_session
-
-from snowflake.core import Root
-
+# Import python packages
 import pandas as pd
-import json
+import streamlit as st
+from snowflake.snowpark.context import get_active_session
+from snowflake.cortex import Complete
+import snowflake.snowpark.functions as F
+import snowflake.snowpark.types as T
 
-pd.set_option("max_colwidth",None)
+# Set Streamlit page configuration
+st.set_page_config(layout="wide", initial_sidebar_state="expanded")
+st.title(":truck: Tasty Bytes Support: Customer Q&A Assistant  :truck:")
+st.caption(
+    f"""Welcome! This application suggests answers to customer questions based 
+    on corporate documentation and previous agent responses in support chats.
+    """
+)
 
-### Default Values
-NUM_CHUNKS = 3 # Num-chunks provided as context. Play with this to check how it affects your accuracy
-
-# service parameters
-CORTEX_SEARCH_DATABASE = "CC_QUICKSTART_CORTEX_SEARCH_DOCS"
-CORTEX_SEARCH_SCHEMA = "DATA"
-CORTEX_SEARCH_SERVICE = "CC_SEARCH_SERVICE_CS"
-######
-######
-
-# columns to query in the service
-COLUMNS = [
-    "chunk",
-    "relative_path",
-    "category"
-]
-
+# Get current credentials
 session = get_active_session()
-root = Root(session)                         
 
-svc = root.databases[CORTEX_SEARCH_DATABASE].schemas[CORTEX_SEARCH_SCHEMA].cortex_search_services[CORTEX_SEARCH_SERVICE]
-   
-### Functions
-     
-def config_options():
+# Constants
+CHAT_MEMORY = 20
+DOC_TABLE = "DEMO_DB_V3.DEMO_SCHEMA_V3.vector_store"  # Updated to DEMO_DB_V3.DEMO_SCHEMA_V3
 
-    st.sidebar.selectbox('Select your model:',(
-                                    'mixtral-8x7b',
-                                    'snowflake-arctic',
-                                    'mistral-large',
-                                    'llama3-8b',
-                                    'llama3-70b',
-                                    'reka-flash',
-                                     'mistral-7b',
-                                     'llama2-70b-chat',
-                                     'gemma-7b'), key="model_name")
+# Reset chat conversation
+def reset_conversation():
+    st.session_state.messages = [
+        {
+            "role": "assistant",
+            "content": "What question do you need assistance answering?",
+        }
+    ]
 
-    categories = session.sql("select category from docs_chunks_table group by category").collect()
 
-    cat_list = ['ALL']
-    for cat in categories:
-        cat_list.append(cat.CATEGORY)
-            
-    st.sidebar.selectbox('Select what products you are looking for', cat_list, key = "category_value")
+##########################################
+#       Select LLM
+##########################################
+with st.expander(":gear: Settings"):
+    model = st.selectbox(
+        "Change chatbot model:",
+        [
+            "mistral-large",
+            "reka-flash",
+            "llama2-70b-chat",
+            "gemma-7b",
+            "mixtral-8x7b",
+            "mistral-7b",
+        ],
+    )
+    st.button("Reset Chat", on_click=reset_conversation)
 
-    st.sidebar.expander("Session State").write(st.session_state)
 
-def get_similar_chunks_search_service(query):
+##########################################
+#       RAG
+##########################################
+def get_context(chat, DOC_TABLE):
+    chat_summary = summarize(chat)
+    return find_similar_doc(chat_summary, DOC_TABLE)
 
-    if st.session_state.category_value == "ALL":
-        response = svc.search(query, COLUMNS, limit=NUM_CHUNKS)
-    else: 
-        filter_obj = {"@eq": {"category": st.session_state.category_value} }
-        response = svc.search(query, COLUMNS, filter=filter_obj, limit=NUM_CHUNKS)
 
-    st.sidebar.json(response.json())
-    
-    return response.json()  
+def summarize(chat):
+    summary = Complete(
+        model,
+        "Provide the most recent question with essential context from this support chat: "
+        + chat,
+    )
+    return summary.replace("'", "")
 
-def create_prompt (myquestion):
 
-    if st.session_state.rag == 1:
-        prompt_context = get_similar_chunks_search_service(myquestion)
-  
-        prompt = f"""
-           You are an expert chat assistance that extracs information from the CONTEXT provided
-           between <context> and </context> tags.
-           When ansering the question contained between <question> and </question> tags
-           be concise and do not hallucinate. 
-           If you don´t have the information just say so.
-           Only anwer the question if you can extract it from the CONTEXT provideed.
-           
-           Do not mention the CONTEXT used in your answer.
-    
-           <context>          
-           {prompt_context}
-           </context>
-           <question>  
-           {myquestion}
-           </question>
-           Answer: 
-           """
+def find_similar_doc(text, DOC_TABLE):
+    doc = session.sql(f"""Select input_text,
+                        source_desc,
+                        VECTOR_COSINE_SIMILARITY(chunk_embedding, SNOWFLAKE.CORTEX.EMBED_TEXT_768('e5-base-v2', '{text.replace("'", "''")}')) as dist
+                        from {DOC_TABLE}
+                        order by dist desc
+                        limit 1
+                        """).to_pandas()
+    st.info("Selected Source: " + doc["SOURCE_DESC"].iloc[0])
+    return doc["INPUT_TEXT"].iloc[0]
 
-        json_data = json.loads(prompt_context)
+##########################################
+#       Prompt Construction
+##########################################
+if "background_info" not in st.session_state:
+    st.session_state.background_info = (
+        session.table("DEMO_DB_V3.DEMO_SCHEMA_V3.documents")  # Updated to DEMO_DB_V3.DEMO_SCHEMA_V3
+        .select("raw_text")
+        .filter(F.col("relative_path") == "tasty_bytes_who_we_are.pdf")
+        .collect()[0][0]
+    )
 
-        relative_paths = set(item['relative_path'] for item in json_data['results'])
-        
-    else:     
-        prompt = f"""[0]
-         'Question:  
-           {myquestion} 
-           Answer: '
-           """
-        relative_paths = "None"
-            
-    return prompt, relative_paths
 
-def complete(myquestion):
+def get_prompt(chat, context):
+    prompt = f"""Answer this new customer question sent to our support agent
+        at Tasty Bytes Food Truck Company. Use the background information
+        and provided context taken from the most relevant corporate documents
+        or previous support chat logs with other customers.
+        Be concise and only answer the latest question.
+        The question is in the chat.
+        Chat: <chat> {chat} </chat>.
+        Context: <context> {context} </context>.
+        Background Info: <background_info> {st.session_state.background_info} </background_info>."""
+    return prompt.replace("'", "")
 
-    prompt, relative_paths =create_prompt (myquestion)
-    cmd = """
-            select snowflake.cortex.complete(?, ?) as response
-          """
-    
-    df_response = session.sql(cmd, params=[st.session_state.model_name, prompt]).collect()
-    return df_response, relative_paths
 
-def main():
-    
-    st.title(f":speech_balloon: Chat Document Assistant with Snowflake Cortex")
-    st.write("This is the list of documents you already have and that will be used to answer your questions:")
-    docs_available = session.sql("ls @docs").collect()
-    list_docs = []
-    for doc in docs_available:
-        list_docs.append(doc["name"])
-    st.dataframe(list_docs)
+##########################################
+#       Chat with LLM
+##########################################
+if "messages" not in st.session_state:
+    reset_conversation()
 
-    config_options()
+if user_message := st.chat_input():
+    st.session_state.messages.append({"role": "user", "content": user_message})
 
-    st.session_state.rag = st.sidebar.checkbox('Use your own documents as context?')
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
-    question = st.text_input("Enter question", placeholder="Is there any special lubricant to be used with the premium bike?", label_visibility="collapsed")
-
-    if question:
-        response, relative_paths = complete(question)
-        res_text = response[0].RESPONSE
-        st.markdown(res_text)
-
-        if relative_paths != "None":
-            with st.sidebar.expander("Related Documents"):
-                for path in relative_paths:
-                    cmd2 = f"select GET_PRESIGNED_URL(@docs, '{path}', 360) as URL_LINK from directory(@docs)"
-                    df_url_link = session.sql(cmd2).to_pandas()
-                    url_link = df_url_link._get_value(0,'URL_LINK')
-        
-                    display_url = f"Doc: [{path}]({url_link})"
-                    st.sidebar.markdown(display_url)
-                
-if __name__ == "__main__":
-    main()
+if st.session_state.messages[-1]["role"] != "assistant":
+    chat = str(st.session_state.messages[-CHAT_MEMORY:]).replace("'", "")
+    with st.chat_message("assistant"):
+        with st.status("Answering..", expanded=True) as status:
+            st.write("Finding relevant documents & support chat logs...")
+            # Get relevant information
+            context = get_context(chat, DOC_TABLE)
+            st.write("Using search results to answer your question...")
+            # Ask LLM
+            prompt = get_prompt(chat, context)
+            response = Complete(model, prompt)
+            status.update(label="Complete!", state="complete", expanded=False)
+        st.markdown(response)
+    st.session_state.messages.append({"role": "assistant", "content": response})
