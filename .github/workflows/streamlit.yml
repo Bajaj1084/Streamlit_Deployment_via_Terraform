@@ -70,7 +70,7 @@ jobs:
       
     - name: Terraform Apply
       id: apply
-      run: terraform apply
+      run: terraform apply -auto-approve
       
 
     - name: 'Deploy the Streamlit app'
