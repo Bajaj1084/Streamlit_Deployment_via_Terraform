@@ -22,13 +22,13 @@ jobs:
       id: set-env
       run: |
             if [[ "${{ github.ref_name }}" == "main" ]]; then
-              env_directory=./prod
+              
               echo "Deployment to Prod"
             elif [[ "${{ github.ref_name }}" == "dev" ]]; then
-              env_directory="./dev"
+              
               echo "Deployment to Dev"
             elif [[ "${{ github.ref_name }}" == "test" ]]; then
-              env_directory=./test
+           
               echo "Deployment to Test"
             else
               echo "Invalid branch for deployment"
