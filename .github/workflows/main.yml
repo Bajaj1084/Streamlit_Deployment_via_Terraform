@@ -111,8 +111,8 @@ jobs:
       run: terraform apply -auto-approve
       
 
-    - name: 'Deploy the Streamlit app'
-      working-directory: ./dev
+    - name: 'Deploy the Streamlit app'  
       shell: bash
       run: |
+        working-directory: ./dev
         snow streamlit deploy --replace
