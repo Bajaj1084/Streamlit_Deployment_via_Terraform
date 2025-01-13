@@ -64,18 +64,6 @@ resource "snowflake_file_format" "csv_ff" {
 
 
 
-# Create Stage
-#resource "snowflake_stage" "s3_stage" {
- # name        = "S3LOAD"
-  #database    = "DEMO_DB_V4"
-  #schema      = "DEMO_SCHEMA_V4"
-  #url         = "s3://sfquickstarts/tastybytes-cx/app/"
-  #file_format = "DEMO_DB_V3.DEMO_SCHEMA_V3.APP_CSV_FF"  # Fully qualified name
-  #comment     = "Quickstarts S3 Stage Connection"
-#}
-
-
-
 
 # Data Copy Commands (Run these manually or via an external process as Terraform does not handle data loading directly)
 # COPY INTO TASTY_BYTES_CHATBOT.APP.DOCUMENTS FROM @TASTY_BYTES_CHATBOT.APP.S3LOAD/DOCUMENTS/
