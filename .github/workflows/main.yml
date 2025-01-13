@@ -64,8 +64,21 @@ jobs:
         # echo "password = \"$SNOWFLAKE_PASSWORD\"" >> ~/.snowflake/config.toml
         # chmod 0600 ~/.snowflake/config.toml
         
+        if [[ "${{ github.ref_name }}" == "main" ]]; then
             mkdir -p ~/.snowflake
-            cp ${{ env.env_directory }}/config.toml ~/.snowflake/config.toml
+            cp ./prod/config.toml ~/.snowflake/config.toml
+            echo "password = \"$SNOWFLAKE_PASSWORD\"" >> ~/.snowflake/config.toml
+            chmod 0600 ~/.snowflake/config.toml
+
+        if [[ "${{ github.ref_name }}" == "test" ]]; then
+            mkdir -p ~/.snowflake
+            cp ./test/config.toml ~/.snowflake/config.toml
+            echo "password = \"$SNOWFLAKE_PASSWORD\"" >> ~/.snowflake/config.toml
+            chmod 0600 ~/.snowflake/config.toml
+
+        if [[ "${{ github.ref_name }}" == "dev" ]]; then
+            mkdir -p ~/.snowflake
+            cp ./dev/config.toml ~/.snowflake/config.toml
             echo "password = \"$SNOWFLAKE_PASSWORD\"" >> ~/.snowflake/config.toml
             chmod 0600 ~/.snowflake/config.toml
 
