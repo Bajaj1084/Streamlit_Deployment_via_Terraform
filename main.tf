@@ -6,7 +6,6 @@ terraform {
     }
   }
 
-
   backend "remote" {
     organization = "my-organization-name"
 
