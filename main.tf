@@ -61,7 +61,7 @@ resource "snowflake_file_format" "csv_ff" {
   validate_utf8                = true
 }
 
-resource "snowflake_file_format" "csv_ff" {
+resource "snowflake_file_format" "app_csv_ff" {
   name                         = "CSV_FF"
   database                     = "DEMO_DB_V4"
   schema                       = "DEMO_SCHEMA"
