@@ -94,41 +94,24 @@ jobs:
     #   id: fmt
     #   run: terraform fmt -check
 
-    # - name: Terraform Init
-    #   id: init
-    #   run: terraform init
+    - name: Terraform Init
+      id: init
+      run: terraform init
 
-    # - name: Terraform Validate
-    #   id: validate
-    #   run: terraform validate -no-color
+    - name: Terraform Validate
+      id: validate
+      run: terraform validate -no-color
 
-    # - name: Terraform Plan
-    #   id: plan
-    #   run: terraform plan
+    - name: Terraform Plan
+      id: plan
+      run: terraform plan
       
-    # - name: Terraform Apply
-    #   id: apply
-    #   run: terraform apply -auto-approve
+    - name: Terraform Apply
+      id: apply
+      run: terraform apply -auto-approve
 
-    # - name : 'Directory'
-    #   run: |
-    #          if [[ "${{ github.ref_name }}" == "main" ]]; then
-    #             working-directory: ./prod
-              
-    #          elif [[ "${{ github.ref_name }}" == "dev" ]]; then
-    #             env_directory="./prod"
-                
-    #          elif [[ "${{ github.ref_name }}" == "test" ]]; then
-    #             working-directory: ./test
-    #          else
-    #             echo "Invalid branch for deployment"
-    #          exit 1
-    #          fi
-
-    # - name: 'Deploy the Streamlit app' 
-    #   shell: bash
-    #   run: |
-    #     snow streamlit deploy --replace
+   
+   
 
     - name: 'Deploy the Streamlit app'
       shell: bash
