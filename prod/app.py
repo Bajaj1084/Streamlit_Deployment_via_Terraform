@@ -1,6 +1,7 @@
 # Import python packages
 # Streamlit
 # Novo Nordisk Streamlit app Demo
+import numpy as np
 import pandas as pd
 import streamlit as st
 from snowflake.snowpark.context import get_active_session
