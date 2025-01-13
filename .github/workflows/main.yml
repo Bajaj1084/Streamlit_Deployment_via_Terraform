@@ -60,10 +60,29 @@ jobs:
         # echo "password = \"$SNOWFLAKE_PASSWORD\"" >> ~/.snowflake/config.toml
         # chmod 0600 ~/.snowflake/config.toml
 
-        mkdir -p ~/.snowflake
-        cp ./prod/config.toml ~/.snowflake/config.toml
-        echo "password = \"$SNOWFLAKE_PASSWORD\"" >> ~/.snowflake/config.toml
-        chmod 0600 ~/.snowflake/config.toml
+
+        if [[ "${{ github.ref_name }}" == "main" ]]; then
+              mkdir -p ~/.snowflake
+              cp ./prod/config.toml ~/.snowflake/config.toml
+              echo "password = \"$SNOWFLAKE_PASSWORD\"" >> ~/.snowflake/config.toml
+              chmod 0600 ~/.snowflake/config.toml
+              
+        elif [[ "${{ github.ref_name }}" == "dev" ]]; then
+              mkdir -p ~/.snowflake
+              cp ./dev/config.toml ~/.snowflake/config.toml
+              echo "password = \"$SNOWFLAKE_PASSWORD\"" >> ~/.snowflake/config.toml
+              chmod 0600 ~/.snowflake/config.toml
+              
+        elif [[ "${{ github.ref_name }}" == "test" ]]; then
+              mkdir -p ~/.snowflake
+              cp ./test/config.toml ~/.snowflake/config.toml
+              echo "password = \"$SNOWFLAKE_PASSWORD\"" >> ~/.snowflake/config.toml
+              chmod 0600 ~/.snowflake/config.toml
+        else
+              echo "Invalid branch for deployment"
+        exit 1
+        fi
+        
 
     # - name: Test Snowflake Connection
     #   shell: bash
@@ -90,10 +109,24 @@ jobs:
     - name: Terraform Apply
       id: apply
       run: terraform apply -auto-approve
-      
+
+   
+   
 
     - name: 'Deploy the Streamlit app'
-      working-directory: ./prod
       shell: bash
       run: |
+        if [[ "${{ github.ref_name }}" == "main" ]]; then
+          env_directory="./prod"
+        elif [[ "${{ github.ref_name }}" == "dev" ]]; then
+          env_directory="./dev"
+        elif [[ "${{ github.ref_name }}" == "test" ]]; then
+          env_directory="./test"
+        else
+          echo "Error: Invalid branch name."
+          exit 1
+        fi
+        
+        echo "Using environment directory: $env_directory"
+        cd $env_directory
         snow streamlit deploy --replace
