@@ -100,9 +100,7 @@ jobs:
       id: init
       run: terraform init
 
-    - name: Terraform Refresh
-      id : refresh
-      run : terraform refresh
+    
       
     - name: Terraform Validate
       id: validate
