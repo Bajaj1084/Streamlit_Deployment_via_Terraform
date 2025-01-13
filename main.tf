@@ -20,13 +20,13 @@ provider "snowflake" {
 }
 
 resource "snowflake_database" "demo_db" {
-  name    = "DEMO_DB_V3"
+  name    = "DEMO_DB_V4"
   comment = "Database for Snowflake Terraform demo"
 }
 
 resource "snowflake_schema" "demo_schema" {
   database = snowflake_database.demo_db.name
-  name     = "DEMO_SCHEMA_V3"
+  name     = "DEMO_SCHEMA_V4"
   comment  = "Schema for Snowflake Terraform demo"
 }
 
@@ -39,8 +39,8 @@ resource "snowflake_warehouse" "app_wh" {
 }
 
 resource "snowflake_table" "docs_chunks_table" {
-  database = "DEMO_DB_V3"  # Replace with your database name
-  schema   = "DEMO_SCHEMA_V3"    # Replace with your schema name
+  database = "DEMO_DB_V4"  # Replace with your database name
+  schema   = "DEMO_SCHEMA_V4"    # Replace with your schema name
   name     = "DOCS_CHUNKS_TABLE"
 
   column {
@@ -84,8 +84,8 @@ resource "snowflake_table" "docs_chunks_table" {
 # Create File Format
 resource "snowflake_file_format" "csv_ff" {
   name                         = "APP_CSV_FF"
-  database                     = "DEMO_DB_V3"
-  schema                       = "DEMO_SCHEMA_V3"
+  database                     = "DEMO_DB_V4"
+  schema                       = "DEMO_SCHEMA_V4"
   format_type                  = "CSV"
   binary_format                = "UTF8"  # Binary format UTF-8
   compression                  = "AUTO"  # Automatic compression
@@ -109,13 +109,98 @@ resource "snowflake_file_format" "csv_ff" {
 # Create Stage
 #resource "snowflake_stage" "s3_stage" {
  # name        = "S3LOAD"
-  #database    = "DEMO_DB_V3"
-  #schema      = "DEMO_SCHEMA_V3"
+  #database    = "DEMO_DB_V4"
+  #schema      = "DEMO_SCHEMA_V4"
   #url         = "s3://sfquickstarts/tastybytes-cx/app/"
   #file_format = "DEMO_DB_V3.DEMO_SCHEMA_V3.APP_CSV_FF"  # Fully qualified name
   #comment     = "Quickstarts S3 Stage Connection"
 #}
 
+# Create Documents Table
+resource "snowflake_table" "documents" {
+  name      = "DOCUMENTS"
+  database  = "DEMO_DB_V4"
+  schema    = "DEMO_SCHEMA_V4"
+  comment   = "{\"origin\":\"sf_sit-is\", \"name\":\"voc\", \"version\":{\"major\":1, \"minor\":0}, \"attributes\":{\"is_quickstart\":1, \"source\":\"streamlit\", \"vignette\":\"rag_chatbot\"}}"
+  column {
+    name = "RELATIVE_PATH"
+    type = "VARCHAR(16777216)"
+  }
+  column {
+    name = "RAW_TEXT"
+    type = "VARCHAR(16777216)"
+  }
+}
+
+# Create Array Table
+resource "snowflake_table" "array_table" {
+  name     = "ARRAY_TABLE"
+  database = "DEMO_DB_V4"
+  schema   = "DEMO_SCHEMA_V4"
+  column {
+    name = "SOURCE"
+    type = "VARCHAR(6)"
+  }
+  column {
+    name = "SOURCE_DESC"
+    type = "VARCHAR(16777216)"
+  }
+  column {
+    name = "FULL_TEXT"
+    type = "VARCHAR(16777216)"
+  }
+  column {
+    name = "SIZE"
+    type = "NUMBER(18,0)"
+  }
+  column {
+    name = "CHUNK"
+    type = "VARCHAR(16777216)"
+  }
+  column {
+    name = "INPUT_TEXT"
+    type = "VARCHAR(16777216)"
+  }
+  column {
+    name = "CHUNK_EMBEDDING"
+    type = "ARRAY"
+  }
+}
+
+# Create Vector Store Table
+resource "snowflake_table" "vector_store" {
+  name     = "VECTOR_STORE"
+  database = "DEMO_DB_V4"
+  schema   = "DEMO_SCHEMA_V4"
+  column {
+    name = "SOURCE"
+    type = "VARCHAR(6)"
+  }
+  column {
+    name = "SOURCE_DESC"
+    type = "VARCHAR(16777216)"
+  }
+  column {
+    name = "FULL_TEXT"
+    type = "VARCHAR(16777216)"
+  }
+  column {
+    name = "SIZE"
+    type = "NUMBER(18,0)"
+  }
+  column {
+    name = "CHUNK"
+    type = "VARCHAR(16777216)"
+  }
+  column {
+    name = "INPUT_TEXT"
+    type = "VARCHAR(16777216)"
+  }
+  column {
+    name = "CHUNK_EMBEDDING"
+    type = "VECTOR(FLOAT, 768)"
+  }
+}
 
 
 
