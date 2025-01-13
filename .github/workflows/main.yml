@@ -26,7 +26,6 @@ jobs:
               echo "Deployment to Prod"
             elif [[ "${{ github.ref_name }}" == "dev" ]]; then
               env_directory=./dev
-              echo "env_directory=./dev" >> $GITHUB_ENV
               echo "Deployment to Dev"
             elif [[ "${{ github.ref_name }}" == "test" ]]; then
               env_directory=./test
@@ -83,9 +82,9 @@ jobs:
             chmod 0600 ~/.snowflake/config.toml
 
         else
-              echo "Invalid branch for deployment"
-            exit 1
-            fi
+            echo "Invalid branch for deployment"
+        exit 1
+        fi
 
     - name: Terraform Init
       id: init
