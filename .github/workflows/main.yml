@@ -25,7 +25,7 @@ jobs:
               env_directory=./prod
               echo "Deployment to Prod"
             elif [[ "${{ github.ref_name }}" == "dev" ]]; then
-              env_directory=./dev
+              env_directory="./dev"
               echo "Deployment to Dev"
             elif [[ "${{ github.ref_name }}" == "test" ]]; then
               env_directory=./test
