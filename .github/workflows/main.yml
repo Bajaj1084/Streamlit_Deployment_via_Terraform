@@ -109,10 +109,23 @@ jobs:
     - name: Terraform Apply
       id: apply
       run: terraform apply -auto-approve
-      
 
-    - name: 'Deploy the Streamlit app'  
+    - name : 'Directory'
+      run: |
+             if [[ "${{ github.ref_name }}" == "main" ]]; then
+                working-directory: ./prod
+              
+             elif [[ "${{ github.ref_name }}" == "dev" ]]; then
+                working-directory: ./dev
+                
+             elif [[ "${{ github.ref_name }}" == "test" ]]; then
+                working-directory: ./test
+             else
+                echo "Invalid branch for deployment"
+             exit 1
+             fi
+
+    - name: 'Deploy the Streamlit app' 
       shell: bash
       run: |
-        working-directory: ./dev
         snow streamlit deploy --replace
