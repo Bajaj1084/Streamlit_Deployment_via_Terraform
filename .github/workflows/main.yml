@@ -22,10 +22,13 @@ jobs:
       id: set-env
       run: |
             if [[ "${{ github.ref_name }}" == "main" ]]; then
+              env_directory=./prod
               echo "Deployment to Prod"
             elif [[ "${{ github.ref_name }}" == "dev" ]]; then
+              env_directory=./dev
               echo "Deployment to Dev"
             elif [[ "${{ github.ref_name }}" == "test" ]]; then
+              env_directory=./test
               echo "Deployment to Test"
             else
               echo "Invalid branch for deployment"
@@ -59,21 +62,16 @@ jobs:
         # cp config.toml ~/.snowflake/config.toml
         # echo "password = \"$SNOWFLAKE_PASSWORD\"" >> ~/.snowflake/config.toml
         # chmod 0600 ~/.snowflake/config.toml
+        
+            mkdir -p ~/.snowflake
+            cp ./ ${{ env.env_directory }}/config.toml ~/.snowflake/config.toml
+            echo "password = \"$SNOWFLAKE_PASSWORD\"" >> ~/.snowflake/config.toml
+            chmod 0600 ~/.snowflake/config.toml
 
-        mkdir -p ~/.snowflake
-        cp ./prod/config.toml ~/.snowflake/config.toml
-        echo "password = \"$SNOWFLAKE_PASSWORD\"" >> ~/.snowflake/config.toml
-        chmod 0600 ~/.snowflake/config.toml
-
-    # - name: Test Snowflake Connection
-    #   shell: bash
-    #   run: |
-    #     snowflake-cli "SELECT CURRENT_USER();"
-    #   continue-on-error: false
-
-    # - name: Terraform Format
-    #   id: fmt
-    #   run: terraform fmt -check
+        else
+              echo "Invalid branch for deployment"
+            exit 1
+            fi
 
     - name: Terraform Init
       id: init
@@ -93,7 +91,7 @@ jobs:
       
 
     - name: 'Deploy the Streamlit app'
-      working-directory: ./prod
+      working-directory: ${{ env.env_directory }}
       shell: bash
       run: |
         snow streamlit deploy --replace
