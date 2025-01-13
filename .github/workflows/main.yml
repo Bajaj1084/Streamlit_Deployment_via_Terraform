@@ -110,25 +110,40 @@ jobs:
     #   id: apply
     #   run: terraform apply -auto-approve
 
-    - name : 'Directory'
-      run: |
-             if [[ "${{ github.ref_name }}" == "main" ]]; then
-                working-directory: ./prod
+    # - name : 'Directory'
+    #   run: |
+    #          if [[ "${{ github.ref_name }}" == "main" ]]; then
+    #             working-directory: ./prod
               
-             elif [[ "${{ github.ref_name }}" == "dev" ]]; then
-                working-directory: ./dev
-                shell: bash
-                run: |
-                  snow streamlit deploy --replace
+    #          elif [[ "${{ github.ref_name }}" == "dev" ]]; then
+    #             env_directory="./prod"
                 
-             elif [[ "${{ github.ref_name }}" == "test" ]]; then
-                working-directory: ./test
-             else
-                echo "Invalid branch for deployment"
-             exit 1
-             fi
+    #          elif [[ "${{ github.ref_name }}" == "test" ]]; then
+    #             working-directory: ./test
+    #          else
+    #             echo "Invalid branch for deployment"
+    #          exit 1
+    #          fi
 
     # - name: 'Deploy the Streamlit app' 
     #   shell: bash
     #   run: |
     #     snow streamlit deploy --replace
+
+    - name: 'Deploy the Streamlit app'
+      shell: bash
+      run: |
+        if [[ "${{ github.ref_name }}" == "main" ]]; then
+          env_directory="./prod"
+        elif [[ "${{ github.ref_name }}" == "dev" ]]; then
+          env_directory="./dev"
+        elif [[ "${{ github.ref_name }}" == "test" ]]; then
+          env_directory="./test"
+        else
+          echo "Error: Invalid branch name."
+          exit 1
+        fi
+        
+        echo "Using environment directory: $env_directory"
+        cd $env_directory
+        snow streamlit deploy --replace
