@@ -1,8 +1,0 @@
-[connections.default]
-account = "axivxno-bwb79529"
-region = "us-west-2"
-user = "sftraining"
-role = "ACCOUNTADMIN"
-schema="DEMO_SCHEMA_V3"
-database="DEMO_DB_V3"
-
