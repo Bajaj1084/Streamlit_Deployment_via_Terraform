@@ -65,7 +65,7 @@ jobs:
         # chmod 0600 ~/.snowflake/config.toml
         
             mkdir -p ~/.snowflake
-            cp ./ ${{ env.env_directory }}/config.toml ~/.snowflake/config.toml
+            cp ${{ env.env_directory }}/config.toml ~/.snowflake/config.toml
             echo "password = \"$SNOWFLAKE_PASSWORD\"" >> ~/.snowflake/config.toml
             chmod 0600 ~/.snowflake/config.toml
 
