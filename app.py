@@ -1,6 +1,4 @@
 # Import python packages
-# Streamlit
-# Novo Nordisk Streamlit app Demo
 import numpy as np
 import pandas as pd
 import streamlit as st
