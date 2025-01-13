@@ -38,29 +38,6 @@ resource "snowflake_warehouse" "app_wh" {
   initially_suspended  = false
 }
 
-# Create File Format
-resource "snowflake_file_format" "csv_ff" {
-  name                         = "APP_CSV_FF"
-  database                     = "DEMO_DB_V4"
-  schema                       = "DEMO_SCHEMA_V4"
-  format_type                  = "CSV"
-  binary_format                = "UTF8"  # Binary format UTF-8
-  compression                  = "AUTO"  # Automatic compression
-  date_format                  = "AUTO"  # Auto date format
-  encoding                     = "UTF8"  # Encoding set to UTF-8
-  escape                       = "NONE"  # No escape character
-  escape_unenclosed_field      = "NONE"  # No escape for unenclosed fields
-  field_delimiter              = ";"  # Field delimiter set to semicolon
-  field_optionally_enclosed_by = "\""  # Fields enclosed in double quotes
-  record_delimiter             = "\r\n"  # Record delimiter set to carriage return + newline
-  time_format                  = "AUTO"  # Auto time format
-  timestamp_format             = "AUTO"  # Auto timestamp format
-  empty_field_as_null          = true  # Empty fields treated as null
-  null_if                      = ["", "NA", "NULL"]  # Null values to handle
-  skip_header                  = 1  # Skip the header row (optional)
-  validate_utf8                = true
-}
-
 
 
 
