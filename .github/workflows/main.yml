@@ -94,21 +94,21 @@ jobs:
     #   id: fmt
     #   run: terraform fmt -check
 
-    - name: Terraform Init
-      id: init
-      run: terraform init
+    # - name: Terraform Init
+    #   id: init
+    #   run: terraform init
 
-    - name: Terraform Validate
-      id: validate
-      run: terraform validate -no-color
+    # - name: Terraform Validate
+    #   id: validate
+    #   run: terraform validate -no-color
 
-    - name: Terraform Plan
-      id: plan
-      run: terraform plan
+    # - name: Terraform Plan
+    #   id: plan
+    #   run: terraform plan
       
-    - name: Terraform Apply
-      id: apply
-      run: terraform apply -auto-approve
+    # - name: Terraform Apply
+    #   id: apply
+    #   run: terraform apply -auto-approve
 
     - name : 'Directory'
       run: |
@@ -117,6 +117,9 @@ jobs:
               
              elif [[ "${{ github.ref_name }}" == "dev" ]]; then
                 working-directory: ./dev
+                shell: bash
+                run: |
+                  snow streamlit deploy --replace
                 
              elif [[ "${{ github.ref_name }}" == "test" ]]; then
                 working-directory: ./test
@@ -125,7 +128,7 @@ jobs:
              exit 1
              fi
 
-    - name: 'Deploy the Streamlit app' 
-      shell: bash
-      run: |
-        snow streamlit deploy --replace
+    # - name: 'Deploy the Streamlit app' 
+    #   shell: bash
+    #   run: |
+    #     snow streamlit deploy --replace
