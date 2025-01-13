@@ -6,7 +6,6 @@ terraform {
     }
   }
 
-
   backend "remote" {
     organization = "my-organization-name"
 
@@ -26,7 +25,7 @@ resource "snowflake_database" "demo_db" {
 
 resource "snowflake_schema" "demo_schema" {
   database = snowflake_database.demo_db.name
-  name     = "DEMO_SCHEMA_V4"
+  name     = "DEMO_SCHEMA"
   comment  = "Schema for Snowflake Terraform demo"
 }
 
@@ -43,7 +42,29 @@ resource "snowflake_warehouse" "app_wh" {
 resource "snowflake_file_format" "csv_ff" {
   name                         = "APP_CSV_FF"
   database                     = "DEMO_DB_V4"
-  schema                       = "DEMO_SCHEMA_V4"
+  schema                       = "DEMO_SCHEMA"
+  format_type                  = "CSV"
+  binary_format                = "UTF8"  # Binary format UTF-8
+  compression                  = "AUTO"  # Automatic compression
+  date_format                  = "AUTO"  # Auto date format
+  encoding                     = "UTF8"  # Encoding set to UTF-8
+  escape                       = "NONE"  # No escape character
+  escape_unenclosed_field      = "NONE"  # No escape for unenclosed fields
+  field_delimiter              = ";"  # Field delimiter set to semicolon
+  field_optionally_enclosed_by = "\""  # Fields enclosed in double quotes
+  record_delimiter             = "\r\n"  # Record delimiter set to carriage return + newline
+  time_format                  = "AUTO"  # Auto time format
+  timestamp_format             = "AUTO"  # Auto timestamp format
+  empty_field_as_null          = true  # Empty fields treated as null
+  null_if                      = ["", "NA", "NULL"]  # Null values to handle
+  skip_header                  = 1  # Skip the header row (optional)
+  validate_utf8                = true
+}
+
+resource "snowflake_file_format" "app_csv_ff" {
+  name                         = "CSV_FF"
+  database                     = "DEMO_DB_V4"
+  schema                       = "DEMO_SCHEMA"
   format_type                  = "CSV"
   binary_format                = "UTF8"  # Binary format UTF-8
   compression                  = "AUTO"  # Automatic compression
@@ -66,7 +87,7 @@ resource "snowflake_file_format" "csv_ff" {
 
 resource "snowflake_table" "docs_chunks_table" {
   database = "DEMO_DB_V4"  # Replace with your database name
-  schema   = "DEMO_SCHEMA_V4"    # Replace with your schema name
+  schema   = "DEMO_SCHEMA"    # Replace with your schema name
   name     = "DOCS_CHUNKS_TABLE"
 
   column {
@@ -113,7 +134,7 @@ resource "snowflake_table" "docs_chunks_table" {
 resource "snowflake_table" "documents" {
   name      = "DOCUMENTS"
   database  = "DEMO_DB_V4"
-  schema    = "DEMO_SCHEMA_V4"
+  schema    = "DEMO_SCHEMA"
   comment   = "{\"origin\":\"sf_sit-is\", \"name\":\"voc\", \"version\":{\"major\":1, \"minor\":0}, \"attributes\":{\"is_quickstart\":1, \"source\":\"streamlit\", \"vignette\":\"rag_chatbot\"}}"
   column {
     name = "RELATIVE_PATH"
@@ -129,7 +150,7 @@ resource "snowflake_table" "documents" {
 resource "snowflake_table" "array_table" {
   name     = "ARRAY_TABLE"
   database = "DEMO_DB_V4"
-  schema   = "DEMO_SCHEMA_V4"
+  schema   = "DEMO_SCHEMA"
   column {
     name = "SOURCE"
     type = "VARCHAR(6)"
@@ -164,7 +185,7 @@ resource "snowflake_table" "array_table" {
 resource "snowflake_table" "vector_store" {
   name     = "VECTOR_STORE"
   database = "DEMO_DB_V4"
-  schema   = "DEMO_SCHEMA_V4"
+  schema   = "DEMO_SCHEMA"
   column {
     name = "SOURCE"
     type = "VARCHAR(6)"
