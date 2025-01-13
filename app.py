@@ -21,7 +21,7 @@ session = get_active_session()
 
 # Constants
 CHAT_MEMORY = 20
-DOC_TABLE = "DEMO_DB_V4.DEMO_SCHEMA_V4.vector_store"  # Updated to DEMO_DB_V4.DEMO_SCHEMA_V4
+DOC_TABLE = "DEMO_DB_V4.DEMO_SCHEMA.vector_store"  # Updated to DEMO_DB_V4.DEMO_SCHEMA
 
 # Reset chat conversation
 def reset_conversation():
@@ -84,7 +84,7 @@ def find_similar_doc(text, DOC_TABLE):
 ##########################################
 if "background_info" not in st.session_state:
     st.session_state.background_info = (
-        session.table("DEMO_DB_V4.DEMO_SCHEMA_V4.documents")  # Updated to DEMO_DB_V4.DEMO_SCHEMA_V4
+        session.table("DEMO_DB_V4.DEMO_SCHEMA.documents")  # Updated to DEMO_DB_V4.DEMO_SCHEMA
         .select("raw_text")
         .filter(F.col("relative_path") == "tasty_bytes_who_we_are.pdf")
         .collect()[0][0]
