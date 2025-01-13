@@ -61,7 +61,7 @@ jobs:
         # chmod 0600 ~/.snowflake/config.toml
 
         mkdir -p ~/.snowflake
-        cp ./prod/config.toml ~/.snowflake/config.toml
+        cp ./dev/config.toml ~/.snowflake/config.toml
         echo "password = \"$SNOWFLAKE_PASSWORD\"" >> ~/.snowflake/config.toml
         chmod 0600 ~/.snowflake/config.toml
 
@@ -93,7 +93,7 @@ jobs:
       
 
     - name: 'Deploy the Streamlit app'
-      working-directory: ./prod
+      working-directory: ./dev
       shell: bash
       run: |
         snow streamlit deploy --replace
