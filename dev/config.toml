@@ -3,5 +3,12 @@ account = "axivxno-bwb79529"
 region = "us-west-2"
 user = "sftraining"
 role = "ACCOUNTADMIN"
-schema="DEMO_SCHEMA"
-database="DEMO_DB_V4"
+schema = "STREAMLIT_SCHEMA"
+database = "STREAMLIT_DB"
+
+[packages]
+# Add required Snowflake-supported packages
+snowflake-ml-python = "1.6.4"
+snowflake-snowpark-python = "1.20.0"
+snowflake-connector-python = "3.10.0"
+streamlit = "1.35.0"
